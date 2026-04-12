@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sensor Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Live Sensor Dashboard</h1>
+
+  <div class="card">
+    <h2>Temperature</h2>
+    <div class="value" id="temp">--</div>
+    <div class="unit">°C</div>
+    <p class="meta">ADS1115 → NTC (see <code>ads1115_sensor.py</code>). Klipper object suffix defaults to <code>voltage_reading</code> (<code>[ads1115_sensor voltage_reading]</code>); use <code>?sensor=…</code> if yours differs.</p>
+  </div>
+
+  <div class="card">
+    <h2>ADC voltage</h2>
+    <div class="value" id="voltage">--</div>
+    <div class="unit">V (pin A0)</div>
+  </div>
+
+  <div class="card">
+    <h2>Last update</h2>
+    <div class="value value-sm" id="updated">—</div>
+    <div class="unit">local time (ADS1115)</div>
+  </div>
+
+  <div class="card card-wide">
+    <h2>HX711 load cell</h2>
+    <p class="meta">DOUT + PD_SCK on the MCU (see <code>hx711.py</code>). Object <code id="hx-object-key">hx711 loadcell</code>. Add <code>?hx711=0</code> if this section is not in cfg yet.</p>
+    <div class="hx-grid">
+      <div>
+        <div class="hx-label">Raw (24-bit)</div>
+        <div class="value value-md" id="hx-raw">--</div>
+      </div>
+      <div>
+        <div class="hx-label">Gain</div>
+        <div class="value value-md" id="hx-gain">--</div>
+      </div>
+      <div>
+        <div class="hx-label">Weight (g)</div>
+        <div class="value value-md" id="hx-weight">—</div>
+        <div class="unit">set <code>scale</code> / <code>offset</code> in cfg</div>
+      </div>
+      <div>
+        <div class="hx-label">Read errors</div>
+        <div class="value value-md" id="hx-errors">0</div>
+      </div>
+    </div>
+    <div class="bar-wrap" aria-hidden="true">
+      <div class="bar-fill" id="hx-bar-fill"></div>
+    </div>
+    <div class="unit bar-caption">Magnitude (log-scaled, visual only)</div>
+    <div class="hx-label" style="margin-top:10px">Last HX711 update</div>
+    <div class="value value-sm" id="hx-updated">—</div>
+  </div>
+
+  <div class="card">
+    <h2>Connection</h2>
+    <div class="value value-sm" id="status">Connecting...</div>
+    <p class="meta">Moonraker <code id="ws-host"></code>:7125</p>
+  </div>
+
+  <script>
+    document.getElementById('ws-host').textContent = window.location.hostname || 'adampi.local';
+    (function () {
+      const p = new URLSearchParams(window.location.search);
+      const name = p.get('loadcell') || 'loadcell';
+      document.getElementById('hx-object-key').textContent = 'hx711 ' + name;
+    })();
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>
